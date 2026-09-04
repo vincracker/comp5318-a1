@@ -13,7 +13,7 @@ Requires [uv](https://docs.astral.sh/uv/). Python 3.13 is pinned in `.python-ver
 # 1. Install the exact dependencies from uv.lock (first time, and after anyone runs `uv add`)
 uv sync
 
-# 2. Launch JupyterLab and open ml-project-group.ipynb
+# 2. Launch JupyterLab and open main.ipynb
 uv run jupyter lab
 ```
 
@@ -21,7 +21,7 @@ Useful one-offs:
 
 ```bash
 # Execute the whole notebook headlessly to check it runs top-to-bottom (writes a copy, leaves the original alone)
-uv run jupyter nbconvert --to notebook --execute --output /tmp/check.ipynb ml-project-group.ipynb
+uv run jupyter nbconvert --to notebook --execute --output /tmp/check.ipynb main.ipynb
 
 # Run a throwaway script inside the project environment
 uv run python somescript.py
@@ -37,7 +37,7 @@ scikit-learn, so a bare `python3 script.py` will fail on the imports.
 
 ```
 code/
-├── ml-project-group.ipynb   # the deliverable (rename to ml-project-group<N>.ipynb once we have our group number)
+├── main.ipynb               # the deliverable (rename to ml-project-group<N>.ipynb before submitting)
 ├── rice-final2.csv          # the dataset we are marked on
 ├── test-before.csv          # 209 x 6 — runnability check only, NOT for marking
 ├── pyproject.toml           # dependencies
@@ -48,49 +48,33 @@ The pristine Canvas downloads and the assignment PDF live one directory up in `.
 
 ## Work split
 
-| Person | Owns |
-|---|---|
-| **A — Integrator** | §1 pre-processing, shared `cvKFold` / `train_test_split` / `run_grid_search()`, the results block, `test-before.csv` check, master notebook, PDF export, submission |
-| **B — Baselines** | Logistic Regression, Naive Bayes (Part 1); KNN, Decision Tree, SVM (Part 2). Consolidates the reflection cell |
-| **C — Ensembles** | AdaBoost, Gradient Boosting, Random Forest (+ macro & weighted F1) |
+Three classifiers each. Cell numbers refer to the template's numbering.
 
-**Only Person A edits `ml-project-group.ipynb`.** Notebook merges are destructive — B and C
+| Person | Classifiers | Also owns |
+|---|---|---|
+| **A** | Logistic Regression (11), Naive Bayes (12), AdaBoost (18) | §1 pre-processing, shared `cvKFold` / `train_test_split` / `run_grid_search()` (10), results block (23), `test-before.csv` check (25), master notebook, PDF export, submission |
+| **B** | KNN (16), Decision Tree (17), Gradient Boosting (19) | Consolidates the reflection (27) |
+| **C** | SVM (21), Random Forest + macro & weighted F1 (20) | — |
+
+**Only Person A edits `main.ipynb`.** Notebook merges are destructive — B and C
 develop in their own scratch copies and hand over cell contents.
 
-## TODO
+Settings that are marked, per classifier:
 
-### Person A — shared scaffolding
-- [x] Cell 3 — imports
-- [x] Cell 5 — `load_dataset()`, reads `?` as NaN
-- [x] Cell 6 — `preprocess_dataset()`: mean imputation, min-max scaling, class1/class2 -> 0/1
-- [x] Cell 7 — `print_data(X, y)`, first 10 rows to 4dp
-- [ ] Cell 1 — fill in group number and the three SIDs (**no names** — marking is anonymous)
-- [ ] Cell 10 — `train_test_split(X, y, stratify=y, random_state=0)` (**decide `test_size` first**)
-- [ ] Cell 10 — `run_grid_search(estimator, param_grid)` helper returning `(best_params, best_cv_score, test_accuracy)`
-- [ ] Cell 23 — assemble everyone's results, template's exact print labels, all floats `.4f`
-- [ ] Cell 25 — run everything against `test-before.csv`, then **clear the output before submitting**
-- [ ] Rename notebook to include the group number
-- [ ] Restart & Run All on rice, export `.ipynb` + `.pdf`, submit to the two separate Canvas boxes
-
-### Person B — Part 1 + simple models
-- [ ] Cell 11 — Logistic Regression, `random_state=0`, `cross_val_score(..., cv=cvKFold)`, report the mean
-- [ ] Cell 12 — Naive Bayes, `GaussianNB()` (no `random_state` — it has no such parameter)
-- [ ] Cell 16 — KNN grid: `k=[1,3,5,7]`, `p=[1,2]`
-- [ ] Cell 17 — Decision Tree, `criterion='entropy'`, `random_state=0`; `max_depth`, `min_samples_split`, `min_samples_leaf`
-- [ ] Cell 21 — SVM, `random_state=0`; `C`, `gamma`
-- [ ] Cell 27 — collect everyone's paragraphs into the reflection
-
-### Person C — ensembles
-- [ ] Cell 18 — AdaBoost, `random_state=0`; `n_estimators`, `learning_rate`
-- [ ] Cell 19 — Gradient Boosting, `random_state=0`; `max_depth`, `n_estimators`, `learning_rate` (48 combos x 10 folds — start early, use `n_jobs=-1`)
-- [ ] Cell 20 — Random Forest, `criterion='entropy'`, `max_features='sqrt'`, `random_state=0`; `n_estimators`, `max_leaf_nodes`
-- [ ] Cell 20 — also report test-set **macro average F1** and **weighted average F1**
+- **Part 1** (Logistic Regression, Naive Bayes) — no tuning. `cross_val_score(..., cv=cvKFold)`,
+  report the mean. `GaussianNB()` takes no `random_state`; passing one raises.
+- **Part 2** (the other six) — `GridSearchCV` over the training split, then score the best
+  estimator on the held-out test set.
+- Decision Tree: `criterion='entropy'`. Random Forest: `criterion='entropy'`, `max_features='sqrt'`.
+- Random Forest also reports test-set **macro average F1** and **weighted average F1**.
+- Gradient Boosting is the heaviest grid (48 combos x 10 folds) — start early, use `n_jobs=-1`.
 
 ### Everyone
-- [ ] Join the same Canvas group (People -> Machine Learning Project Group)
-- [ ] Write 2-3 sentences on your own classifiers for the reflection: how they compare, and what
-      hyperparameter tuning did to their performance (both points are explicitly required)
-- [ ] Fill in the AI Acknowledgement cell
+
+- Join the same Canvas group (People -> Machine Learning Project Group).
+- Write 2-3 sentences on your own classifiers for the reflection: how they compare, and what
+  hyperparameter tuning did to their performance (both points are explicitly required).
+- Fill in the AI Acknowledgement cell.
 
 ## Open decisions
 
@@ -109,6 +93,8 @@ develop in their own scratch copies and hand over cell contents.
 4. **Keep the template's exact print labels** and keep `print_data` byte-for-byte as provided.
 5. **If a cell errors, that part scores 0.** Restart & Run All before every handover.
 6. The submitted notebook must show **rice results only** — no `test-before.csv` output.
+7. **Rename `main.ipynb` to `ml-project-group<N>.ipynb` before submitting** — the spec requires
+   the group number in both the `.ipynb` and the `.pdf` filename.
 
 ## Note for the reflection
 
