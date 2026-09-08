@@ -1,6 +1,6 @@
 # Person B handoff
 
-Person B completed the following assigned work in `main副本B.ipynb`:
+Person B completed the following assigned work in `main.ipynb` on branch `B`:
 
 - Cell 16: KNN with `GridSearchCV`
 - Cell 17: Decision Tree with `criterion='entropy'` and `GridSearchCV`
@@ -24,14 +24,14 @@ or keep the equivalent shared helper in the master notebook.
 
 ## Validation
 
-- `main副本B.ipynb` was restarted and executed from top to bottom with no errors.
+- `main.ipynb` on branch `B` was restarted and executed from top to bottom with no errors.
 - The same code was executed with `test-before.csv` (209 examples and 6 features) with
   no errors, confirming that the implementation does not assume seven features.
 - The committed notebook contains only the required `rice-final2.csv` outputs.
 
 ## Integration notes for Person A
 
-Copy the contents of cells 16, 17, 19, and the relevant paragraphs from cell 27 into the
-master notebook. When integrating, keep only one shared train/test split and one shared
+Review the changes to cells 16, 17, 19, and the relevant paragraphs in cell 27 when merging
+branch `B` into the master notebook. Keep only one shared train/test split and one shared
 grid-search helper. After all eight classifiers are merged, revise the final reflection so
 that its overall comparison includes the other five models as well.
